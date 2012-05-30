@@ -1,5 +1,4 @@
-
-[Video Chat]
+Video Chat
 =================
 
 A simple video chat client implementation using sockets. 
@@ -13,8 +12,10 @@ This application was developed in Hack Night , a fun coding weekend . This proje
 
 Installation
 ----------
-On one session  : $ python server.py
-Another session : $ python client.py
+On one session  
+> $ python server.py
+Another session
+> $ python client.py
 
 
 Working
