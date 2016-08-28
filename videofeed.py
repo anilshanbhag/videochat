@@ -1,43 +1,44 @@
-import cv
-import Image
+import cv2
+import numpy
+import io
+from PIL import Image
 
 class VideoFeed:
 
     def __init__(self,mode=1,name="w1",capture=1):
         print name
-        if mode == 1:
-            cv.StartWindowThread()
-            cv.NamedWindow(name, cv.CV_WINDOW_AUTOSIZE)
         self.camera_index = 0
-        self.name=name
+        self.name = name
         if capture == 1:
-            self.capture = cv.CaptureFromCAM(self.camera_index)
+            self.cam = cv2.VideoCapture(self.camera_index)
 
     def get_frame(self):
-        self.frame = cv.QueryFrame(self.capture)
-        self.c = cv.WaitKey(1)
-        if(self.c=="n"): #in "n" key is pressed while the popup window is in focus
+        ret_val, img = self.cam.read()
+        c = cv2.waitKey(1)
+        if (c == "n"): #in "n" key is pressed while the popup window is in focus
             self.camera_index += 1 #try the next camera index
-            self.capture = cv.CaptureFromCAM(camera_index)
-            if not self.capture: #if the next camera index didn't work, reset to 0.
+            self.cam = cv2.VideoCapture(self.camera_index)
+            if not self.cam: #if the next camera index didn't work, reset to 0.
                 self.camera_index = 0
-                self.capture = cv.CaptureFromCAM(camera_index)
-        jpegImg= Image.fromstring("RGB",cv.GetSize(self.frame),self.frame.tostring())
-        retStr=jpegImg.tostring("jpeg","RGB")
-        print "Compressed Size = ",len(retStr)
-        return retStr
+                self.cam = cv2.VideoCapture(self.camera_index)
 
-#jpeg.compress(self.frame,640,480,8)
+        #cv2.imshow('my webcam', img)
+        cv2_im = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        pil_im = Image.fromarray(cv2_im)
+        b = io.BytesIO()
+        pil_im.save(b, 'jpeg')
+        im_bytes = b.getvalue()
+        return im_bytes
 
-    def set_frame(self, frame):
-#im image("RGB",(640,480))
-        jpegPIL = Image.fromstring("RGB",(640,480),frame,"jpeg","RGB","raw")
-        cv_im = cv.CreateImage((640,480), cv.IPL_DEPTH_8U, 3)
-        cv.SetData(cv_im,jpegPIL.tostring())
-        cv.ShowImage(self.name, cv_im)
+    def set_frame(self, frame_bytes):
+        pil_bytes = io.BytesIO(frame_bytes)
+        pil_image = Image.open(pil_bytes)
+        cv_image = cv2.cvtColor(numpy.array(pil_image), cv2.COLOR_RGB2BGR)
+        cv2.imshow(self.name, cv_image)
+
 if __name__=="__main__":
     vf = VideoFeed(1,"test",1)
     while 1:
         m = vf.get_frame()
         vf.set_frame(m)
-       
+

@@ -1,7 +1,5 @@
-#!/usr/bin/python
 import socket, videosocket
 from videofeed import VideoFeed
-import time
 
 class Server:
     def __init__(self):
@@ -9,8 +7,7 @@ class Server:
         self.server_socket.bind(("", 6000))
         self.server_socket.listen(5)
         self.videofeed = VideoFeed(1,"server",1)
-        print "TCPServer Waiting for client on port 5000"
-
+        print "TCPServer Waiting for client on port 6000"
 
     def start(self):
         while 1:
@@ -18,16 +15,10 @@ class Server:
             print "I got a connection from ", address
             vsock = videosocket.videosocket(client_socket)
             while True:
-
                 frame=vsock.vreceive()
                 self.videofeed.set_frame(frame)
                 frame=self.videofeed.get_frame()
                 vsock.vsend(frame)
-#print frame
-#                self.videofeed.set_frame(frame)
-                 
-#data = client_socket.recv(921600)
-#                print "RECIEVED:" , data
 
 if __name__ == "__main__":
     server = Server()
