@@ -16,8 +16,13 @@ On one session
 > $ python server.py
 
 Another session
+> $ python client.py [optional ip]
+
+For example, if you are doing locally
 > $ python client.py
 
+If the server is on a remote machine
+> $ python client.py {server-ip}
 
 Working
 ----------
@@ -31,6 +36,6 @@ PS : This implementation is two way
 Copyright and license
 ---------------------
 
-Copyright 2012 Anil Shanbhag
+Copyright 2016 Anil Shanbhag
 
 Distributed under GPL v2
